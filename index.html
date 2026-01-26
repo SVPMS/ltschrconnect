@@ -4,25 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base target="_top">
-
   <title>HR Connect</title>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1C5CAB">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-
   <!-- iOS -->
   <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #1C5CAB;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      z-index: 9999;
+    }
+
+    #appFrame {
+      display: none;
+    }
+  </style>
 </head>
 
 <body style="margin:0; padding:0; overflow:hidden;">
+
+  <!-- Loading -->
+  <div id="loader">
+    ⏳ ກຳລັງໂຫຼດ HR Connect...
+  </div>
+
+  <!-- Web App -->
   <iframe
+    id="appFrame"
     src="https://script.google.com/macros/s/AKfycbzqi26AdtLFM_uoMl3gVGTXzc9Sy5635qLHa2NjBz7KC3mZL6-SNskwcuM6BqyMTin7/exec"
     style="position:fixed; inset:0; width:100%; height:100%; border:none;"
     allow="fullscreen"
   ></iframe>
+
+  <script>
+    const iframe = document.getElementById('appFrame');
+    const loader = document.getElementById('loader');
+
+    iframe.onload = () => {
+      loader.style.display = 'none';
+      iframe.style.display = 'block';
+    };
+  </script>
+
 </body>
 </html>
