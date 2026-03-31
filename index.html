@@ -1,63 +1,115 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="lo">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ປ້ອງກັນ Cache ຂອງ Browser ໃຫ້ໄດ້ຫຼາຍທີ່ສຸດ -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+
 <title>HR Connect</title>
-<link rel="manifest" href="manifest.json?v=3.0.1">
-<meta name="theme-color" content="#1C5CAB">
-<link rel="apple-touch-icon" href="icon-192.png">
-  <!-- ນຳເຂົ້າຟອນ Noto Sans Lao ຈາກ Google Fonts -->
+
+<!-- 1. ນຳເຂົ້າຟອນ Noto Sans Lao -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;700&display=swap" rel="stylesheet">
 
+<!-- 2. Manifest ພ້ອມ Version ໃໝ່ -->
+<link rel="manifest" href="manifest.json?v=3.0.2">
+<meta name="theme-color" content="#1C5CAB">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 <style>
-  {
-  font-family: 'Noto Sans Lao', sans-serif;
-}
-  body { margin: 0; padding: 0; overflow: hidden; font-family: system-ui, sans-serif; background-color: #1C5CAB; }
-  #splash {
-    position: fixed; inset: 0; background: linear-gradient(135deg, #1C5CAB, #0F3B7A);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #fff; z-index: 9999; transition: opacity .5s ease;
+  /* ກຳນົດໃຫ້ທຸກສ່ວນໃຊ້ຟອນ Noto Sans Lao */
+  * {
+    font-family: 'Noto Sans Lao', sans-serif;
+    box-sizing: border-box;
   }
-  .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+
+  body { 
+    margin: 0; 
+    padding: 0; 
+    overflow: hidden; 
+    background-color: #1C5CAB; 
+  }
+
+  /* Splash Screen */
+  #splash {
+    position: fixed; 
+    inset: 0; 
+    background: linear-gradient(135deg, #1C5CAB, #0F3B7A);
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    color: #fff; 
+    z-index: 9999; 
+    transition: opacity .5s ease;
+  }
+
+  .spinner { 
+    width: 40px; 
+    height: 40px; 
+    border: 4px solid rgba(255,255,255,.3); 
+    border-top-color: #fff; 
+    border-radius: 50%; 
+    animation: spin 1s linear infinite; 
+    margin-bottom: 15px; 
+  }
+
   @keyframes spin { to { transform: rotate(360deg); } }
   
-  /* ປຸ່ມສຳຮອງ ຖ້າມັນຄ້າງ */
+  #status {
+    font-size: 16px;
+    opacity: 0.9;
+  }
+
+  /* ປຸ່ມສຳຮອງ ຖ້າມັນຄ້າງ ຫຼື ໂຫຼດຊ້າ */
   #retry-btn {
-    margin-top: 20px; padding: 10px 20px; background: rgba(255,255,255,0.2);
-    border: 1px solid #fff; color: #fff; border-radius: 20px;
-    display: none; cursor: pointer; text-decoration: none; font-size: 14px;
+    margin-top: 25px; 
+    padding: 12px 24px; 
+    background: rgba(255,255,255,0.2);
+    border: 1px solid #fff; 
+    color: #fff; 
+    border-radius: 30px;
+    display: none; 
+    cursor: pointer; 
+    font-size: 14px;
+    text-transform: uppercase;
   }
   
-  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: none; display: block; }
+  iframe { 
+    position: fixed; 
+    inset: 0; 
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+    display: block; 
+  }
 </style>
 </head>
 <body>
 
 <div id="splash">
-  <img src="icon-192.png" width="80" height="80" style="margin-bottom:20px">
+  <img src="icon-192.png" width="80" height="80" style="margin-bottom:20px; border-radius: 20%;">
   <div class="spinner"></div>
   <div id="status">Loading...</div>
-  <!-- ປຸ່ມນີ້ຈະໂຊຂຶ້ນມາເມື່ອໂຫຼດດົນເກີນໄປ -->
-  <div id="retry-btn" onclick="hideSplash()">ຄລິກເພື່ອເຂົ້າແອັບ</div>
+  <!-- ປຸ່ມກົດຖ້າຄ້າງ -->
+  <div id="retry-btn" onclick="hideSplash()">Enter App</div>
 </div>
 
+<!-- Link ຂອງ Google Apps Script -->
 <iframe id="app" src="https://script.google.com/macros/s/AKfycbyO9u4Bkv3ee1oFK-2MtuHY15I2nxYwS2AVVXTSLLJzdzALvAhHJAndGk2YWR-2ajNR/exec"></iframe>
 
 <script>
-  // --- 1. ບັງຄັບ Version ໃໝ່ທຸກຄັ້ງ ---
-  const VERSION = '2.0.2'; 
+  // --- ລະບົບບັງຄັບອັບເດດ Version (Force Update) ---
+  const VERSION = '3.0.2'; // ປ່ຽນເລກນີ້ທຸກຄັ້ງທີ່ແກ້ Code
   
   function forceUpdate() {
     const currentVer = localStorage.getItem('app_v');
     if (currentVer !== VERSION) {
       localStorage.setItem('app_v', VERSION);
-      // ບັງຄັບ Reload ຈາກ Server (ລ້າງ Cache)
-      window.location.reload(true);
+      // ບັງຄັບ Reload ຈາກ Server ເພື່ອລ້າງ Cache ເກົ່າ
+      window.location.replace(window.location.href.split('?')[0] + '?v=' + VERSION);
     }
   }
   forceUpdate();
@@ -65,27 +117,30 @@
   const splash = document.getElementById('splash');
   const app = document.getElementById('app');
   const retryBtn = document.getElementById('retry-btn');
+  const statusTxt = document.getElementById('status');
 
   function hideSplash() {
     splash.style.opacity = '0';
-    setTimeout(() => { splash.style.display = 'none'; }, 500);
+    setTimeout(() => { 
+      splash.style.display = 'none'; 
+    }, 500);
   }
 
-  // ຖ້າ Iframe ໂຫຼດສຳເລັດ
+  // 1. ເມື່ອ Iframe ໂຫຼດສຳເລັດ ໃຫ້ປິດ Splash
   app.onload = () => {
     hideSplash();
   };
 
-  // ຖ້າຜ່ານໄປ 5 ວິນາທີ ແລ້ວຍັງບໍ່ຫາຍຄ້າງ ໃຫ້ສະແດງປຸ່ມກົດເອງ
+  // 2. ຖ້າມັນຄ້າງເກີນ 6 ວິນາທີ ໃຫ້ສະແດງປຸ່ມ Enter App
   setTimeout(() => {
     if (splash.style.display !== 'none') {
-       document.getElementById('status').innerText = "ການເຊື່ອມຕໍ່ຊ້າ...";
+       statusTxt.innerText = "Connection is slow...";
        retryBtn.style.display = 'block';
     }
-  }, 5000);
+  }, 6000);
 
-  // ບັງຄັບປິດ Splash ທັນທີຫຼັງ 10 ວິນາທີ ບໍ່ວ່າຈະໂຫຼດແລ້ວຫຼືບໍ່
-  setTimeout(hideSplash, 10000);
+  // 3. ບັງຄັບປິດ Splash ຫຼັງ 12 ວິນາທີ (Safety Fallback)
+  setTimeout(hideSplash, 12000);
 </script>
 
 </body>
