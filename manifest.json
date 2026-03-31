@@ -1,12 +1,12 @@
 {
   "name": "HR Connect",
   "short_name": "LTSC",
-  "start_url": "./",
+  "start_url": "./index.html?v=1.0.2",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#1C5CAB",
+  "theme_color": "#1C5CAB",
   "icons": [
     {
       "src": "icon-192.png",
