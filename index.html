@@ -93,27 +93,22 @@
 
 <script>
   // --- ລະບົບຈັດການ Version ---
-  const APP_VERSION = '1.0.2'; // ** ປ່ຽນເລກນີ້ທຸກຄັ້ງທີ່ທ່ານ Update Code ໃນ GitHub **
+  const APP_VERSION = '1.0.3'; // ປ່ຽນເລກນີ້ທຸກຄັ້ງທີ່ Update
 
   function checkUpdate() {
     const savedVersion = localStorage.getItem('app_version');
     const statusText = document.getElementById('status-text');
 
     if (savedVersion !== APP_VERSION) {
-      console.log('ກຳລັງອັບເດດເປັນເວີຊັນໃໝ່...');
       statusText.innerText = 'ກຳລັງອັບເດດລະບົບໃໝ່...';
-      
-      // ບັນທຶກ Version ໃໝ່ລົງໃນເຄື່ອງ
       localStorage.setItem('app_version', APP_VERSION);
-      
-      // ບັງຄັບ Reload ເພື່ອດຶງໄຟລ໌ໃໝ່ຈາກ GitHub
-      window.location.reload(true);
+      // ບັງຄັບໂຫຼດໃໝ່ຈາກ Server
+      window.location.replace(window.location.href.split('?')[0] + '?v=' + APP_VERSION);
       return false;
     }
     return true;
   }
 
-  // ເລີ່ມການເຮັດວຽກ
   window.addEventListener('load', () => {
     if (checkUpdate()) {
       const splash = document.getElementById('splash');
@@ -122,17 +117,26 @@
 
       statusText.innerText = 'ກຳລັງໂຫຼດຂໍ້ມູນ...';
 
-      // ເມື່ອ Iframe ໂຫຼດສຳເລັດ
+      // 1. ຖ້າ Iframe ໂຫຼດສຳເລັດຕາມປົກກະຕິ
       app.onload = () => {
-        setTimeout(() => {
+        hideSplash();
+      };
+
+      // 2. ລະບົບປ້ອງກັນການຄ້າງ (Safety Timeout)
+      // ຖ້າຜ່ານໄປ 10 ວິນາທີ ແລ້ວຍັງໂຫຼດບໍ່ແລ້ວ ໃຫ້ປິດ Splash ທັນທີ
+      setTimeout(() => {
+        hideSplash();
+      }, 10000); 
+
+      function hideSplash() {
+        if (splash.style.display !== 'none') {
           splash.style.opacity = 0;
           app.style.display = 'block';
-
           setTimeout(() => {
             splash.style.display = 'none';
           }, 500);
-        }, 1000); // ໜ່ວງເວລາໃຫ້ Splash ເບິ່ງ smooth
-      };
+        }
+      }
     }
   });
 </script>
