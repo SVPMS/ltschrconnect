@@ -3,142 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- ປ້ອງກັນ Cache ຂອງ Browser -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-
-<base target="_top">
 <title>HR Connect</title>
-
-<!-- ໃສ່ Version ໃຫ້ Manifest ເພື່ອໃຫ້ Browser ກວດສອບການປ່ຽນແປງ -->
-<link rel="manifest" href="manifest.json?v=1.0.2">
+<link rel="manifest" href="manifest.json?v=2.0.1">
 <meta name="theme-color" content="#1C5CAB">
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    background-color: #1C5CAB;
-  }
-
-  /* Splash Screen */
+  body { margin: 0; padding: 0; overflow: hidden; font-family: system-ui, sans-serif; background-color: #1C5CAB; }
   #splash {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #1C5CAB, #0F3B7A);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    z-index: 9999;
-    transition: opacity .5s ease;
+    position: fixed; inset: 0; background: linear-gradient(135deg, #1C5CAB, #0F3B7A);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; z-index: 9999; transition: opacity .5s ease;
   }
-
-  #logo {
-    width: 72px;
-    height: 72px;
-    margin-bottom: 16px;
+  .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  
+  /* ປຸ່ມສຳຮອງ ຖ້າມັນຄ້າງ */
+  #retry-btn {
+    margin-top: 20px; padding: 10px 20px; background: rgba(255,255,255,0.2);
+    border: 1px solid #fff; color: #fff; border-radius: 20px;
+    display: none; cursor: pointer; text-decoration: none; font-size: 14px;
   }
-
-  .spinner {
-    width: 36px;
-    height: 36px;
-    border: 4px solid rgba(255,255,255,.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 12px;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .loading-text {
-    font-size: 14px;
-    opacity: .9;
-  }
-
-  iframe {
-    display: none;
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
+  
+  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: none; display: block; }
 </style>
 </head>
-
 <body>
 
-<!-- Splash Screen -->
 <div id="splash">
-  <img id="logo" src="icon-192.png" alt="HR Connect">
+  <img src="icon-192.png" width="80" height="80" style="margin-bottom:20px">
   <div class="spinner"></div>
-  <div id="status-text" class="loading-text">ກຳລັງກວດສອບເວີຊັນໃໝ່...</div>
+  <div id="status">ກຳລັງໂຫຼດ...</div>
+  <!-- ປຸ່ມນີ້ຈະໂຊຂຶ້ນມາເມື່ອໂຫຼດດົນເກີນໄປ -->
+  <div id="retry-btn" onclick="hideSplash()">ຄລິກເພື່ອເຂົ້າແອັບ</div>
 </div>
 
-<!-- App Iframe -->
-<iframe
-  id="app"
-  src="https://script.google.com/macros/s/AKfycbyO9u4Bkv3ee1oFK-2MtuHY15I2nxYwS2AVVXTSLLJzdzALvAhHJAndGk2YWR-2ajNR/exec"
-  allow="fullscreen">
-</iframe>
+<iframe id="app" src="https://script.google.com/macros/s/AKfycbyO9u4Bkv3ee1oFK-2MtuHY15I2nxYwS2AVVXTSLLJzdzALvAhHJAndGk2YWR-2ajNR/exec"></iframe>
 
 <script>
-  // --- ລະບົບຈັດການ Version ---
-  const APP_VERSION = '1.0.3'; // ປ່ຽນເລກນີ້ທຸກຄັ້ງທີ່ Update
-
-  function checkUpdate() {
-    const savedVersion = localStorage.getItem('app_version');
-    const statusText = document.getElementById('status-text');
-
-    if (savedVersion !== APP_VERSION) {
-      statusText.innerText = 'ກຳລັງອັບເດດລະບົບໃໝ່...';
-      localStorage.setItem('app_version', APP_VERSION);
-      // ບັງຄັບໂຫຼດໃໝ່ຈາກ Server
-      window.location.replace(window.location.href.split('?')[0] + '?v=' + APP_VERSION);
-      return false;
+  // --- 1. ບັງຄັບ Version ໃໝ່ທຸກຄັ້ງ ---
+  const VERSION = '2.0.1'; 
+  
+  function forceUpdate() {
+    const currentVer = localStorage.getItem('app_v');
+    if (currentVer !== VERSION) {
+      localStorage.setItem('app_v', VERSION);
+      // ບັງຄັບ Reload ຈາກ Server (ລ້າງ Cache)
+      window.location.reload(true);
     }
-    return true;
+  }
+  forceUpdate();
+
+  const splash = document.getElementById('splash');
+  const app = document.getElementById('app');
+  const retryBtn = document.getElementById('retry-btn');
+
+  function hideSplash() {
+    splash.style.opacity = '0';
+    setTimeout(() => { splash.style.display = 'none'; }, 500);
   }
 
-  window.addEventListener('load', () => {
-    if (checkUpdate()) {
-      const splash = document.getElementById('splash');
-      const app = document.getElementById('app');
-      const statusText = document.getElementById('status-text');
+  // ຖ້າ Iframe ໂຫຼດສຳເລັດ
+  app.onload = () => {
+    hideSplash();
+  };
 
-      statusText.innerText = 'ກຳລັງໂຫຼດຂໍ້ມູນ...';
-
-      // 1. ຖ້າ Iframe ໂຫຼດສຳເລັດຕາມປົກກະຕິ
-      app.onload = () => {
-        hideSplash();
-      };
-
-      // 2. ລະບົບປ້ອງກັນການຄ້າງ (Safety Timeout)
-      // ຖ້າຜ່ານໄປ 10 ວິນາທີ ແລ້ວຍັງໂຫຼດບໍ່ແລ້ວ ໃຫ້ປິດ Splash ທັນທີ
-      setTimeout(() => {
-        hideSplash();
-      }, 10000); 
-
-      function hideSplash() {
-        if (splash.style.display !== 'none') {
-          splash.style.opacity = 0;
-          app.style.display = 'block';
-          setTimeout(() => {
-            splash.style.display = 'none';
-          }, 500);
-        }
-      }
+  // ຖ້າຜ່ານໄປ 5 ວິນາທີ ແລ້ວຍັງບໍ່ຫາຍຄ້າງ ໃຫ້ສະແດງປຸ່ມກົດເອງ
+  setTimeout(() => {
+    if (splash.style.display !== 'none') {
+       document.getElementById('status').innerText = "ການເຊື່ອມຕໍ່ຊ້າ...";
+       retryBtn.style.display = 'block';
     }
-  });
+  }, 5000);
+
+  // ບັງຄັບປິດ Splash ທັນທີຫຼັງ 10 ວິນາທີ ບໍ່ວ່າຈະໂຫຼດແລ້ວຫຼືບໍ່
+  setTimeout(hideSplash, 10000);
 </script>
 
 </body>
